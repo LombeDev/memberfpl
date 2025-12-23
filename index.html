@@ -3,58 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FPL Scout | Pro Member Dashboard</title>
+    <title>FPL Scout | Member Portal</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
-
     <div id="auth-overlay">
-        <div class="login-card">
-            <div class="scout-logo">FPL<span>SCOUT</span></div>
-            <h1>Member Access</h1>
-            <p>Sign in to access premium league analytics, consensus picks, and scout tools.</p>
-            <button class="primary-btn" onclick="netlifyIdentity.open()">Sign In / Register</button>
-            <div class="login-footer">Official FPL Data Sync • Secure Access</div>
+        <div class="auth-card">
+            <h1>FPL SCOUT <span class="badge">PRO</span></h1>
+            <p>Access professional league analytics & scout tools.</p>
+            <button onclick="netlifyIdentity.open()" class="primary-btn">Member Login</button>
         </div>
     </div>
 
-    <div id="app">
+    <div id="app" style="display: none;">
         <header>
             <div class="header-content">
-                <div class="menu-toggle" id="menuToggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                <div id="menuToggle" class="menu-toggle">
+                    <span></span><span></span><span></span>
                 </div>
-                <div class="scout-logo-small">FPL<span>SCOUT</span></div>
-                <button id="logoutBtn" class="logout-link">Logout</button>
+                <div class="logo">FPL SCOUT</div>
+                <button onclick="netlifyIdentity.logout()" class="logout-link">Logout</button>
             </div>
         </header>
 
         <nav id="sideNav" class="side-nav">
             <div class="nav-header">
-                <div class="scout-logo-small">FPL<span>SCOUT</span></div>
-                <div class="close-nav" id="closeNav">&times;</div>
+                <h3>War Room Menu</h3>
+                <span id="closeNav" style="cursor:pointer; font-size: 1.5rem;">&times;</span>
             </div>
-            <div class="nav-links-container">
-                <div class="nav-link active" data-tab="members">League Standings</div>
-                <div class="nav-link" data-tab="popular">Consensus XI</div>
-                <div class="nav-link" data-tab="fixtures">Fixture Ticker</div>
-                <div class="nav-link" data-tab="predictions">Captaincy Poll</div>
-                <div class="nav-link" data-tab="transfers">Scout Planner</div>
-            </div>
+            <div class="nav-link active" data-tab="members">League Standings</div>
+            <div class="nav-link" data-tab="liveBonus">Live Bonus Predictor</div>
+            <div class="nav-link" data-tab="popular">Effective Ownership</div>
+            <div class="nav-link" data-tab="fixtures">Fixture Ticker</div>
+            <div class="nav-link" data-tab="transfers">Scout Tool</div>
         </nav>
-        <div class="nav-overlay" id="navOverlay"></div>
-
-    
+        <div id="navOverlay" class="nav-overlay"></div>
 
         <main class="container">
-            <div id="members" class="tab-content active-tab"></div>
-            <div id="popular" class="tab-content"></div>
-            <div id="fixtures" class="tab-content"></div>
-            <div id="predictions" class="tab-content"></div>
-            <div id="transfers" class="tab-content"></div>
+            <section id="members" class="tab-content active-tab">
+                <div class="loader">Scouting League Data...</div>
+            </section>
+            
+            <section id="liveBonus" class="tab-content">
+                <div id="bonusContainer"></div>
+            </section>
+
+            <section id="popular" class="tab-content"></section>
+            <section id="fixtures" class="tab-content"></section>
+            <section id="transfers" class="tab-content"></section>
         </main>
     </div>
 
