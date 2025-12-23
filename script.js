@@ -63,7 +63,7 @@ async function loadAllSections() {
     }
 }
 
-/* 1. REALISTIC MEMBERS LIST */
+/* 1. MEMBERS LIST */
 function renderMembers(league) {
     const el = document.getElementById("members");
     let html = `<h2>${league.league.name} <span class="badge">Live</span></h2>`;
@@ -83,7 +83,7 @@ function renderMembers(league) {
     el.innerHTML = html;
 }
 
-/* 2. REALISTIC COMMUNITY XI */
+/* 2. COMMUNITY XI */
 async function renderCommunityXI(league, bootstrap) {
     const el = document.getElementById("popular");
     const currentGW = bootstrap.events.find(e => e.is_current)?.id || 1;
@@ -101,7 +101,7 @@ async function renderCommunityXI(league, bootstrap) {
     }
 
     const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 11);
-    el.innerHTML = `<h2>Consensus XI <small>Market Ownership</small></h2>`;
+    el.innerHTML = `<h2>Consensus XI <small>Top 5 Rivals</small></h2>`;
     sorted.forEach(([id, count]) => {
         const p = playerMap[id];
         const statusIcon = p.status !== 'a' ? '⚠️' : '✅';
@@ -113,7 +113,7 @@ async function renderCommunityXI(league, bootstrap) {
     });
 }
 
-/* 3. REALISTIC FIXTURE TICKER */
+/* 3. FIXTURE TICKER */
 async function renderFixtures(bootstrap) {
     const el = document.getElementById("fixtures");
     const fixtures = await fetchFPL("fpl_fixtures", "fixtures?future=1", 3600000);
@@ -121,53 +121,75 @@ async function renderFixtures(bootstrap) {
     bootstrap.teams.forEach(t => teams[t.id] = { name: t.short_name });
 
     el.innerHTML = "<h2>Upcoming Difficulty</h2>";
-    fixtures.slice(0, 15).forEach(f => {
-        const diffColor = f.team_h_difficulty <= 2 ? '#00ff87' : (f.team_h_difficulty >= 4 ? '#ff005a' : '#e1e1e1');
-        el.innerHTML += `
-            <div class="card flex-between">
-                <span><strong>${teams[f.team_h].name}</strong> vs ${teams[f.team_a].name}</span>
-                <span class="diff-chip" style="background:${diffColor}">GW${f.event}</span>
-            </div>`;
-    });
+    if (fixtures) {
+        fixtures.slice(0, 12).forEach(f => {
+            const diffColor = f.team_h_difficulty <= 2 ? '#00ff87' : (f.team_h_difficulty >= 4 ? '#ff005a' : '#e1e1e1');
+            el.innerHTML += `
+                <div class="card flex-between">
+                    <span><strong>${teams[f.team_h].name}</strong> vs ${teams[f.team_a].name}</span>
+                    <span class="diff-chip" style="background:${diffColor}">GW${f.event}</span>
+                </div>`;
+        });
+    }
 }
 
-/* 4. REALISTIC PREDICTIONS */
+/* 4. PREDICTIONS & CAPTAINCY POLL */
 function renderPredictions(bootstrap) {
-    const topICT = [...bootstrap.elements].sort((a, b) => b.ict_index - a.ict_index)[0];
-    document.getElementById("predictions").innerHTML = `
-        <h2>Advanced Metrics</h2>
+    const el = document.getElementById("predictions");
+    const userVote = localStorage.getItem("fpl_user_vote");
+    
+    // Get top form players for the poll
+    const candidates = [...bootstrap.elements]
+        .sort((a, b) => b.form - a.form)
+        .slice(0, 3);
+
+    let html = `
+        <h2>Captaincy Poll <small>League Vote</small></h2>
         <div class="card info-card">
-            <p>📈 <strong>ICT Index Leader:</strong> ${topICT.web_name} (${topICT.ict_index})</p>
-            <p>💎 <strong>Value Pick:</strong> ${(topICT.now_cost / 10).toFixed(1)}m</p>
-            <p>🎯 <strong>Captaincy Model:</strong> High Confidence (Salah)</p>
-        </div>`;
+            <p style="margin-bottom:15px; color:#888;">Who is your captain for the next Gameweek?</p>
+            <div class="poll-container">`;
+
+    candidates.forEach(p => {
+        const isSelected = userVote === p.web_name;
+        html += `
+            <button class="poll-option ${isSelected ? 'selected' : ''}" 
+                    onclick="handleVote('${p.web_name}')">
+                <span>${p.web_name}</span>
+                <span class="vote-check">${isSelected ? '⭐' : ''}</span>
+            </button>`;
+    });
+
+    html += `</div></div>`;
+    el.innerHTML = html;
 }
 
-/* 5. REALISTIC SEARCHABLE PLANNER */
+window.handleVote = function(playerName) {
+    localStorage.setItem("fpl_user_vote", playerName);
+    const bootstrap = JSON.parse(localStorage.getItem("fpl_bootstrap")).data;
+    renderPredictions(bootstrap);
+};
+
+/* 5. SCOUTING PLANNER */
 function renderPlanner(bootstrap) {
     const el = document.getElementById("transfers");
     el.innerHTML = `
         <h2>Scouting Tool</h2>
-        <input type="text" id="playerSearch" class="fpl-input" placeholder="Search Player Name...">
+        <input type="text" id="playerSearch" class="fpl-input" placeholder="Search Player (e.g. Palmer)...">
         <div id="plannerOutput"></div>`;
 
     document.getElementById("playerSearch").oninput = (e) => {
         const query = e.target.value.toLowerCase();
+        if (query.length < 3) return;
+        
         const player = bootstrap.elements.find(p => p.web_name.toLowerCase().includes(query));
         const output = document.getElementById("plannerOutput");
-        if (player && query.length > 2) {
+        if (player) {
             const team = bootstrap.teams.find(t => t.id === player.team).name;
             output.innerHTML = `
-                <div class="card scout-result">
+                <div class="card scout-result" style="display:block">
                     <h3>${player.first_name} ${player.second_name}</h3>
-                    <div class="flex-between">
-                        <span>Team: ${team}</span>
-                        <span>Price: £${(player.now_cost / 10).toFixed(1)}m</span>
-                    </div>
-                    <div class="flex-between">
-                        <span>Form: ${player.form}</span>
-                        <span>Points: ${player.total_points}</span>
-                    </div>
+                    <p>Team: ${team} | Price: £${(player.now_cost / 10).toFixed(1)}m</p>
+                    <p>Form: ${player.form} | Total Pts: ${player.total_points}</p>
                 </div>`;
         }
     };
