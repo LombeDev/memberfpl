@@ -63,3 +63,32 @@ h2 { font-size: 1.2rem; color: var(--fpl-navy); margin-bottom: 20px; border-left
 .winner { color: #059669; background: #ecfdf5; border-radius: 4px; }
 
 @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+
+/* EO Progress Bars */
+.eo-badge {
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.eo-bar-bg {
+    width: 100%;
+    height: 6px;
+    background: #edf2f7;
+    border-radius: 10px;
+    margin-top: 12px;
+    overflow: hidden;
+}
+
+.eo-bar-fill {
+    height: 100%;
+    transition: width 1s ease-in-out;
+}
+
+/* Tooltip for EO */
+.card:hover .eo-bar-fill {
+    filter: brightness(1.1);
+}
