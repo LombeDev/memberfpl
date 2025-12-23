@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FPL Members Area | 101712</title>
+    <title>FPL Scout | Pro Member Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
@@ -11,33 +11,50 @@
 
     <div id="auth-overlay">
         <div class="login-card">
-            <h1>FPL Elite Area</h1>
-            <p>Private League 101712</p>
-            <button id="loginBtn" onclick="netlifyIdentity.open()">Sign In to Access</button>
+            <div class="scout-logo">FPL<span>SCOUT</span></div>
+            <h1>Member Access</h1>
+            <p>Sign in to access premium league analytics, consensus picks, and scout tools.</p>
+            <button class="primary-btn" onclick="netlifyIdentity.open()">Sign In / Register</button>
+            <div class="login-footer">Official FPL Data Sync • Secure Access</div>
         </div>
     </div>
 
-    <div id="app" style="display: none;">
+    <div id="app">
         <header>
             <div class="header-content">
-                <h1>FPL Dashboard</h1>
-                <button id="logoutBtn" class="secondary-btn">Logout</button>
+                <div class="menu-toggle" id="menuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="scout-logo-small">FPL<span>SCOUT</span></div>
+                <button id="logoutBtn" class="logout-link">Logout</button>
             </div>
-            <nav>
-                <button class="nav-link active" data-tab="members">Members</button>
-                <button class="nav-link" data-tab="popular">Community XI</button>
-                <button class="nav-link" data-tab="predictions">Predictions</button>
-                <button class="nav-link" data-tab="transfers">Planner</button>
-                <button class="nav-link" data-tab="fixtures">Fixtures</button>
-            </nav>
         </header>
 
+        <nav id="sideNav" class="side-nav">
+            <div class="nav-header">
+                <div class="scout-logo-small">FPL<span>SCOUT</span></div>
+                <div class="close-nav" id="closeNav">&times;</div>
+            </div>
+            <div class="nav-links-container">
+                <div class="nav-link active" data-tab="members">League Standings</div>
+                <div class="nav-link" data-tab="popular">Consensus XI</div>
+                <div class="nav-link" data-tab="fixtures">Fixture Ticker</div>
+                <div class="nav-link" data-tab="predictions">Captaincy Poll</div>
+                <div class="nav-link" data-tab="transfers">Scout Planner</div>
+            </div>
+        </nav>
+        <div class="nav-overlay" id="navOverlay"></div>
+
+    
+
         <main class="container">
-            <section id="members" class="tab-content active-tab"></section>
-            <section id="popular" class="tab-content"></section>
-            <section id="predictions" class="tab-content"></section>
-            <section id="transfers" class="tab-content"></section>
-            <section id="fixtures" class="tab-content"></section>
+            <div id="members" class="tab-content active-tab"></div>
+            <div id="popular" class="tab-content"></div>
+            <div id="fixtures" class="tab-content"></div>
+            <div id="predictions" class="tab-content"></div>
+            <div id="transfers" class="tab-content"></div>
         </main>
     </div>
 
