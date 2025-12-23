@@ -1,7 +1,6 @@
 const https = require('https');
 
 exports.handler = async (event) => {
-    // Define the headers to solve the CORS block
     const corsHeaders = {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Headers": "Content-Type",
@@ -9,7 +8,6 @@ exports.handler = async (event) => {
         "Content-Type": "application/json"
     };
 
-    // Handle the browser's security check (Preflight)
     if (event.httpMethod === "OPTIONS") {
         return { statusCode: 204, headers: corsHeaders, body: '' };
     }
@@ -20,8 +18,7 @@ exports.handler = async (event) => {
     return new Promise((resolve) => {
         const options = {
             headers: {
-                // This 'User-Agent' is the secret to getting past FPL security
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/116.0.0.0 Safari/537.36'
             }
         };
 
@@ -36,11 +33,7 @@ exports.handler = async (event) => {
                 });
             });
         }).on('error', (e) => {
-            resolve({ 
-                statusCode: 500, 
-                headers: corsHeaders, 
-                body: JSON.stringify({ error: e.message }) 
-            });
+            resolve({ statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: e.message }) });
         });
     });
 };
