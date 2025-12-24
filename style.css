@@ -112,3 +112,12 @@ body {
 }
 
 .player-card:hover .remove-btn { display: block; }
+
+.pitch-row:not(#GKP-row) {
+    padding: 0 5%;
+}
+
+/* Push middle players up slightly */
+.pitch-row .player-card:nth-child(3) {
+    transform: translateY(-10px);
+}
